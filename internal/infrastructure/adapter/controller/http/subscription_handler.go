@@ -150,7 +150,7 @@ func (h *SubscriptionHandler) GetByID(c *gin.Context) {
 		return
 	}
 
-	sub, err := h.getUC.Execute(c.Request.Context(), usecase.GetSubscriptionCommand{
+	res, err := h.getUC.Execute(c.Request.Context(), usecase.GetSubscriptionCommand{
 		SubscriptionID: subscriptionID,
 	})
 	if err != nil {
@@ -158,7 +158,7 @@ func (h *SubscriptionHandler) GetByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, sub)
+	c.JSON(http.StatusOK, res.Subscription)
 }
 
 func (h *SubscriptionHandler) Delete(c *gin.Context) {
@@ -228,7 +228,7 @@ func (h *SubscriptionHandler) List(c *gin.Context) {
 		}
 	}
 
-	subs, err := h.listUC.Execute(c.Request.Context(), usecase.ListSubscriptionsCommand{
+	res, err := h.listUC.Execute(c.Request.Context(), usecase.ListSubscriptionsCommand{
 		UserID:      userID,
 		ServiceName: serviceName,
 		FromDate:    fromDate,
@@ -241,7 +241,5 @@ func (h *SubscriptionHandler) List(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"subs": subs,
-	})
+	c.JSON(http.StatusOK, res.Subs)
 }

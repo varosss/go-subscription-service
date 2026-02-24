@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"go-subscription-service/internal/domain/entity"
+	"go-subscription-service/internal/application/dto"
 	"go-subscription-service/internal/domain/port"
 	"go-subscription-service/internal/domain/valueobject"
 	"time"
@@ -17,6 +17,10 @@ type ListSubscriptionsCommand struct {
 	Offset      *int
 }
 
+type ListSubscriptionsResult struct {
+	Subs []*dto.Subscription
+}
+
 type ListSubscriptionsUseCase struct {
 	subscriptions port.SubscriptionRepo
 }
@@ -29,7 +33,7 @@ func NewListSubscriptionsUseCase(
 	}
 }
 
-func (uc *ListSubscriptionsUseCase) Execute(ctx context.Context, cmd ListSubscriptionsCommand) ([]*entity.Subscription, error) {
+func (uc *ListSubscriptionsUseCase) Execute(ctx context.Context, cmd ListSubscriptionsCommand) (*ListSubscriptionsResult, error) {
 	subs, err := uc.subscriptions.List(
 		ctx,
 		cmd.UserID,
@@ -43,5 +47,25 @@ func (uc *ListSubscriptionsUseCase) Execute(ctx context.Context, cmd ListSubscri
 		return nil, err
 	}
 
-	return subs, err
+	subsResult := make([]*dto.Subscription, len(subs))
+	for i, sub := range subs {
+		var endDate *string
+		if sub.EndDate() != nil {
+			formattedDate := sub.EndDate().Format("01-2006")
+			endDate = &formattedDate
+		}
+
+		subsResult[i] = &dto.Subscription{
+			ID:          sub.ID().String(),
+			UserID:      sub.UserID().String(),
+			ServiceName: sub.ServiceName(),
+			Price:       sub.Price(),
+			StartDate:   sub.StartDate().Format("01-2006"),
+			EndDate:     endDate,
+		}
+	}
+
+	return &ListSubscriptionsResult{
+		Subs: subsResult,
+	}, err
 }
