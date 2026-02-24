@@ -1,0 +1,53 @@
+x-go-tmpl: &go-tmpl
+  image: vaross/private-projects:subscription-service-prod-latest
+  restart: always
+  platform: linux/amd64
+  working_dir: /srv/app
+  volumes:
+    - ./:/srv/:rw
+  env_file:
+    - .env
+  networks:
+    - subscription-service-network
+  command: go run cmd/main.go
+  
+services:
+  subscription-service-nginx:
+    container_name: subscription-service-nginx
+    image: nginx:1.27-alpine
+    platform: linux/amd64
+    restart: always
+    ports:
+      - 81:80
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - subscription-service-network
+    depends_on:
+      - subscription-service-backend
+
+  subscription-service-backend:
+    <<: *go-tmpl
+    container_name: subscription-service-backend
+
+  subscription-service-postgres:
+    container_name: subscription-service-postgres
+    image: postgres:16-alpine
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - subscription-service-postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - subscription-service-network
+
+volumes:
+  subscription-service-postgres-data:
+    driver: local
+
+networks:
+  subscription-service-network:
+    name: subscription-service-network
+    driver: bridge
