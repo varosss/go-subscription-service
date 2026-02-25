@@ -1,0 +1,16 @@
+INSERT INTO subscriptions (id, service_name, price, user_id, start_date, end_date, created_at, updated_at) VALUES
+('a9b36c0a-210d-487e-ad12-16e5a356d3fb', 'Netflix', 100, '8360b565-2ff9-4c48-9e2d-bc6393c957f6', '2026-02-01', NULL, NOW(), NOW()),
+('4bfba74b-e829-4546-cf72-868eb472e2ec', 'Spotify', 50, 'a23a470e-6d81-4303-8483-3c3062fd6cfb', '2026-01-15', '2026-03-14', NOW(), NOW()),
+('bc8c5c51-e3f5-4ff7-bad9-886ed3a54f55', 'Apple Music', 60, '93abcf46-56b8-412c-8bbd-224503561f7a', '2026-02-10', NULL, NOW(), NOW()),
+('dd4a1186-8f17-4049-9af6-fca632760ba8', 'HBO Max', 120, 'e0439ef2-6af9-41ab-bff2-fb5beb9af088', '2026-01-20', '2026-02-28', NOW(), NOW()),
+('9ce02ae0-f5cf-4b5f-a34a-aee9fff2cfd0', 'Disney+', 90, 'a64c530e-2345-4d0d-862e-521af0532ffc', '2026-02-01', '2026-03-01', NOW(), NOW()),
+('4a2897e1-dde5-4ccf-849b-021b76c7996e', 'Netflix', 100, 'd609145e-2fa5-433c-b13b-f48b41327c43', '2026-03-01', NULL, NOW(), NOW()),
+('25ade560-6f53-47da-8e1c-5d7f19ed792c', 'Spotify', 50, 'eaf02e29-6da8-4f3d-9adc-3fa2fcc06aac', '2026-01-01', '2026-02-15', NOW(), NOW()),
+('67d4140c-ca8a-4acf-8717-c49a24ec92df', 'Hulu', 80, '5149835e-6406-4f59-aa0e-9239aec16898', '2026-02-05', '2026-03-05', NOW(), NOW()),
+('202f6f21-b19f-4d52-a969-742510de16b6', 'Apple Music', 60, 'daad5de6-c279-4270-862d-9ebdd1e83e2d', '2026-02-10', '2026-04-10', NOW(), NOW()),
+('353c8094-717e-41b8-ba53-ef51635391a2', 'Disney+', 90, '8dac6d2d-cfea-449d-b626-708bdc3a1f04', '2026-03-01', NULL, NOW(), NOW()),
+('a93dc533-9420-43ac-9192-afdc39a6fe51', 'HBO Max', 120, 'd9714a27-316f-4fc1-b34c-4527407431de', '2026-02-15', NULL, NOW(), NOW()),
+('57a6262d-e97b-4e75-b82e-b92bc9c442f5', 'Netflix', 100, '13a4dd1e-04bb-4139-bb07-fa3a49fcac5e', '2026-01-10', '2026-02-28', NOW(), NOW()),
+('fc1151a8-b218-4dc7-a338-5ef277e52089', 'Spotify', 50, '38796902-0d9a-41f9-8194-3260a077b2ab', '2026-02-01', NULL, NOW(), NOW()),
+('37c29309-412b-45cf-8206-c8f7e710c77c', 'Hulu', 80, 'f8aa12b5-ee8c-4e23-88c6-da0e571f8d16', '2026-03-01', '2026-04-01', NOW(), NOW()),
+('30ce0431-8dad-4fdc-84e2-0cb8a7dc58d9', 'Disney+', 90, '01ac8e2f-6d76-4ad5-8a9a-38187d7e8967', '2026-02-20', NULL, NOW(), NOW());

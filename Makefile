@@ -22,7 +22,7 @@ docker-migrate-up:
 	MSYS_NO_PATHCONV=1 docker compose exec subscription-backend migrate -path "$(MIGRATIONS_PATH)" -database "$(POSTGRES_URL)" up
 
 docker-migrate-down:
-	MSYS_NO_PATHCONV=1 docker compose exec subscription-backend migrate -path "$(MIGRATIONS_PATH)" -database "$(POSTGRES_URL)" down
+	MSYS_NO_PATHCONV=1 docker compose exec subscription-backend migrate -path "$(MIGRATIONS_PATH)" -database "$(POSTGRES_URL)" down 1
 
 migrate-create:
 	MSYS_NO_PATHCONV=1 migrate create -ext sql -dir "./migrations" $(name)
