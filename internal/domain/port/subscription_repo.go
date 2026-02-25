@@ -20,4 +20,11 @@ type SubscriptionRepo interface {
 		limit *int,
 		offset *int,
 	) ([]*entity.Subscription, error)
+	CalculateTotalCost(
+		ctx context.Context,
+		userID *valueobject.UserID,
+		serviceName *string,
+		fromDate time.Time,
+		toDate time.Time,
+	) (int64, error)
 }

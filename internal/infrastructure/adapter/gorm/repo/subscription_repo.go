@@ -94,3 +94,55 @@ func (r *gormSubscriptionRepo) List(
 
 	return subs, nil
 }
+
+func (r *gormSubscriptionRepo) CalculateTotalCost(
+	ctx context.Context,
+	userID *valueobject.UserID,
+	serviceName *string,
+	fromDate time.Time,
+	toDate time.Time,
+) (int64, error) {
+
+	query := r.db.WithContext(ctx).
+		Model(&model.Subscription{}).
+		Where("start_date <= ?", toDate).
+		Where("(end_date IS NULL OR end_date >= ?)", fromDate)
+
+	if userID != nil {
+		query = query.Where("user_id = ?", userID.String())
+	}
+
+	if serviceName != nil {
+		query = query.Where("service_name ILIKE ?", "%"+*serviceName+"%")
+	}
+
+	var total int64
+
+	err := query.Select(`
+		COALESCE(SUM(
+			(
+				(
+					EXTRACT(YEAR FROM age(
+						LEAST(COALESCE(end_date, ?), ?),
+						GREATEST(start_date, ?)
+					)) * 12
+				)
+				+
+				EXTRACT(MONTH FROM age(
+					LEAST(COALESCE(end_date, ?), ?),
+					GREATEST(start_date, ?)
+				))
+				+ 1
+			) * price
+		), 0)
+	`,
+		toDate, toDate, fromDate,
+		toDate, toDate, fromDate,
+	).Scan(&total).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return total, nil
+}

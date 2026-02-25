@@ -1,5 +1,5 @@
 x-go-tmpl: &go-tmpl
-  image: vaross/private-projects:subscription-service-dev
+  image: vaross/private-projects:subscription-dev
   restart: always
   platform: linux/amd64
   volumes:
@@ -21,6 +21,8 @@ services:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - subscription-network
+    depends_on:
+      - subscription-backend
 
   subscription-backend:
     <<: *go-tmpl

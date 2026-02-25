@@ -10,7 +10,11 @@ import (
 	"os"
 	"os/signal"
 
+	_ "go-subscription-service/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type App struct {
@@ -71,8 +75,11 @@ func BuildApp(cfg *config.Config) (*App, error) {
 		uc.UpdateSub,
 		uc.DeleteSub,
 		uc.ListSubs,
+		uc.CalculateTotalCost,
 	)
 	subsHandler.RegisterRoutes(router)
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	app.httpServer = &http.Server{
 		Addr:    fmt.Sprintf(":%s", cfg.HttpServer.Port),

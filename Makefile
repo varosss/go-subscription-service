@@ -12,7 +12,7 @@ build.dev:
 build.prod:
 	@docker build --no-cache \
 	-f docker/golang/Dockerfile.prod . \
-	-t ${REGISTRY}:${BUILD_DATE}_subscription-prod
+	-t ${REGISTRY}:${BUILD_DATE}_subscription-prod \
 	-t ${REGISTRY}:subscription-prod-latest
 
 # ==============
