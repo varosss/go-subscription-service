@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"go-subscription-service/internal/application"
 	aport "go-subscription-service/internal/application/port"
 	"go-subscription-service/internal/domain/port"
 	"go-subscription-service/internal/domain/valueobject"
@@ -55,7 +56,7 @@ func (uc *CalculateTotalCostUseCase) Execute(
 			aport.Field{Key: "error", Value: err.Error()},
 		)
 
-		return nil, err
+		return nil, application.ErrTotalCostCalculationFailed
 	}
 
 	uc.logger.Info(ctx, "total cost calculated successfully",

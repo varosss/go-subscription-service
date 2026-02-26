@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"go-subscription-service/internal/application"
 	aport "go-subscription-service/internal/application/port"
 	"go-subscription-service/internal/domain/port"
 	"go-subscription-service/internal/domain/valueobject"
@@ -46,23 +47,55 @@ func (uc *UpdateSubscriptionUseCase) Execute(
 			aport.Field{Key: "error", Value: err.Error()},
 		)
 
-		return err
+		return application.ErrSubscriptionNotFound
 	}
 
 	if cmd.Price != nil {
-		subscribtion.SetPrice(*cmd.Price)
+		if err := subscribtion.ChangePrice(*cmd.Price); err != nil {
+			uc.logger.Error(ctx, "failed to change subscriptions price",
+				aport.Field{Key: "subscription_id", Value: cmd.SubscriptionID.String()},
+				aport.Field{Key: "price", Value: *cmd.Price},
+				aport.Field{Key: "error", Value: err.Error()},
+			)
+
+			return application.ErrInvalidSubscriptionData
+		}
 	}
 
 	if cmd.EndDate != nil {
-		subscribtion.SetEndDate(*cmd.EndDate)
+		if err := subscribtion.ChangeEndDate(cmd.EndDate); err != nil {
+			uc.logger.Error(ctx, "failed to change subscriptions end date",
+				aport.Field{Key: "subscription_id", Value: cmd.SubscriptionID.String()},
+				aport.Field{Key: "end_date", Value: cmd.EndDate},
+				aport.Field{Key: "error", Value: err.Error()},
+			)
+
+			return application.ErrInvalidSubscriptionData
+		}
 	}
 
 	if cmd.StartDate != nil {
-		subscribtion.SetStartDate(*cmd.StartDate)
+		if err := subscribtion.ChangeStartDate(*cmd.StartDate); err != nil {
+			uc.logger.Error(ctx, "failed to change subscriptions start date",
+				aport.Field{Key: "subscription_id", Value: cmd.SubscriptionID.String()},
+				aport.Field{Key: "start_date", Value: cmd.StartDate},
+				aport.Field{Key: "error", Value: err.Error()},
+			)
+
+			return application.ErrInvalidSubscriptionData
+		}
 	}
 
 	if cmd.ServiceName != nil {
-		subscribtion.SetServiceName(*cmd.ServiceName)
+		if err := subscribtion.ChangeServiceName(*cmd.ServiceName); err != nil {
+			uc.logger.Error(ctx, "failed to change subscriptions service name",
+				aport.Field{Key: "subscription_id", Value: cmd.SubscriptionID.String()},
+				aport.Field{Key: "service_name", Value: *cmd.ServiceName},
+				aport.Field{Key: "error", Value: err.Error()},
+			)
+
+			return application.ErrInvalidSubscriptionData
+		}
 	}
 
 	if err := uc.subscriptions.Save(ctx, subscribtion); err != nil {
@@ -71,7 +104,7 @@ func (uc *UpdateSubscriptionUseCase) Execute(
 			aport.Field{Key: "error", Value: err.Error()},
 		)
 
-		return err
+		return application.ErrSubscriptionSaveFailed
 	}
 
 	uc.logger.Info(ctx, "subscription updated successfully",

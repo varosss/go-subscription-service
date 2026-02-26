@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"go-subscription-service/internal/application"
 	"go-subscription-service/internal/application/dto"
 	aport "go-subscription-service/internal/application/port"
 	"go-subscription-service/internal/domain/entity"
@@ -46,23 +47,25 @@ func (uc *CreateSubscriptionUseCase) Execute(
 		aport.Field{Key: "service_name", Value: cmd.ServiceName},
 	)
 
-	subscription := entity.NewSubscription(
+	subscription, err := entity.NewSubscription(
 		cmd.UserID,
 		cmd.ServiceName,
 		cmd.Price,
 		cmd.StartDate,
 		cmd.EndDate,
 	)
-
-	err := uc.subscriptions.Save(ctx, subscription)
 	if err != nil {
+		return nil, application.ErrSubscriptionCreationFailed
+	}
+
+	if err := uc.subscriptions.Save(ctx, subscription); err != nil {
 		uc.logger.Error(ctx, "failed to save subscription",
 			aport.Field{Key: "user_id", Value: cmd.UserID.String()},
 			aport.Field{Key: "service_name", Value: cmd.ServiceName},
 			aport.Field{Key: "error", Value: err.Error()},
 		)
 
-		return nil, err
+		return nil, application.ErrSubscriptionSaveFailed
 	}
 
 	uc.logger.Info(ctx, "subscription created successfully",

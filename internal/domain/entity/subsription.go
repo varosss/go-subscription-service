@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"go-subscription-service/internal/domain"
 	"go-subscription-service/internal/domain/valueobject"
 	"time"
 )
@@ -20,7 +21,19 @@ func NewSubscription(
 	price int64,
 	startDate time.Time,
 	endDate *time.Time,
-) *Subscription {
+) (*Subscription, error) {
+	if serviceName == "" {
+		return nil, domain.ErrInvalidServiceName
+	}
+
+	if price <= 0 {
+		return nil, domain.ErrInvalidPrice
+	}
+
+	if endDate != nil && endDate.Before(startDate) {
+		return nil, domain.ErrInvalidDateRange
+	}
+
 	return &Subscription{
 		id:          valueobject.NewSubscriptionID(),
 		userID:      userID,
@@ -28,7 +41,7 @@ func NewSubscription(
 		price:       price,
 		startDate:   startDate,
 		endDate:     endDate,
-	}
+	}, nil
 }
 
 func SubscribtionFromPrimitives(
@@ -73,18 +86,34 @@ func (s *Subscription) EndDate() *time.Time {
 	return s.endDate
 }
 
-func (s *Subscription) SetServiceName(serviceName string) {
+func (s *Subscription) ChangeServiceName(serviceName string) error {
+	if serviceName == "" {
+		return domain.ErrInvalidServiceName
+	}
 	s.serviceName = serviceName
+	return nil
 }
 
-func (s *Subscription) SetPrice(price int64) {
+func (s *Subscription) ChangePrice(price int64) error {
+	if price <= 0 {
+		return domain.ErrInvalidPrice
+	}
 	s.price = price
+	return nil
 }
 
-func (s *Subscription) SetStartDate(startDate time.Time) {
+func (s *Subscription) ChangeStartDate(startDate time.Time) error {
+	if s.endDate != nil && s.endDate.Before(startDate) {
+		return domain.ErrInvalidDateRange
+	}
 	s.startDate = startDate
+	return nil
 }
 
-func (s *Subscription) SetEndDate(endDate time.Time) {
-	s.endDate = &endDate
+func (s *Subscription) ChangeEndDate(endDate *time.Time) error {
+	if endDate != nil && endDate.Before(s.startDate) {
+		return domain.ErrInvalidDateRange
+	}
+	s.endDate = endDate
+	return nil
 }

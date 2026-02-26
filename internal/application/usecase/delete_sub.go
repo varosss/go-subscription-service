@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"go-subscription-service/internal/application"
 	aport "go-subscription-service/internal/application/port"
 	"go-subscription-service/internal/domain/port"
 	"go-subscription-service/internal/domain/valueobject"
@@ -40,7 +41,7 @@ func (uc *DeleteSubscriptionUseCase) Execute(
 			aport.Field{Key: "error", Value: err.Error()},
 		)
 
-		return err
+		return application.ErrSubscriptionDeleteFailed
 	}
 
 	uc.logger.Info(ctx, "subscription deleted successfully",

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"go-subscription-service/internal/application"
 	"go-subscription-service/internal/application/dto"
 	aport "go-subscription-service/internal/application/port"
 	"go-subscription-service/internal/domain/port"
@@ -46,7 +47,7 @@ func (uc *GetSubscriptionUseCase) Execute(
 			aport.Field{Key: "error", Value: err.Error()},
 		)
 
-		return nil, err
+		return nil, application.ErrSubscriptionNotFound
 	}
 
 	var endDate *string
