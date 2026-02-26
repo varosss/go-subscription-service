@@ -21,7 +21,7 @@ func NewGormSubscriptionRepo(db *gorm.DB) *gormSubscriptionRepo {
 }
 
 func (r *gormSubscriptionRepo) Save(ctx context.Context, subscription *entity.Subscription) error {
-	model := mapper.ToSubscribtionModel(subscription)
+	model := mapper.ToSubscriptionModel(subscription)
 
 	now := time.Now()
 
@@ -38,7 +38,7 @@ func (r *gormSubscriptionRepo) GetByID(ctx context.Context, subscriptionID value
 		return nil, err
 	}
 
-	return mapper.ToSubscribtionDomain(model), nil
+	return mapper.ToSubscriptionDomain(model), nil
 }
 
 func (r *gormSubscriptionRepo) DeleteByID(ctx context.Context, subscriptionID valueobject.SubscriptionID) error {
@@ -89,7 +89,7 @@ func (r *gormSubscriptionRepo) List(
 
 	subs := make([]*entity.Subscription, len(subModels))
 	for i, model := range subModels {
-		subs[i] = mapper.ToSubscribtionDomain(model)
+		subs[i] = mapper.ToSubscriptionDomain(model)
 	}
 
 	return subs, nil

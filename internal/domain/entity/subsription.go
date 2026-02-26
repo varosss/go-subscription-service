@@ -44,7 +44,7 @@ func NewSubscription(
 	}, nil
 }
 
-func SubscribtionFromPrimitives(
+func SubscriptionFromPrimitives(
 	id valueobject.SubscriptionID,
 	userID valueobject.UserID,
 	serviceName string,

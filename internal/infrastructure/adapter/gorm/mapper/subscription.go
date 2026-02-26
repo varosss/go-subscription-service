@@ -6,7 +6,7 @@ import (
 	"go-subscription-service/internal/infrastructure/adapter/gorm/model"
 )
 
-func ToSubscribtionModel(d *entity.Subscription) *model.Subscription {
+func ToSubscriptionModel(d *entity.Subscription) *model.Subscription {
 	return &model.Subscription{
 		ID:          d.ID().String(),
 		UserID:      d.UserID().String(),
@@ -17,8 +17,8 @@ func ToSubscribtionModel(d *entity.Subscription) *model.Subscription {
 	}
 }
 
-func ToSubscribtionDomain(m model.Subscription) *entity.Subscription {
-	return entity.SubscribtionFromPrimitives(
+func ToSubscriptionDomain(m model.Subscription) *entity.Subscription {
+	return entity.SubscriptionFromPrimitives(
 		valueobject.SubscriptionID(m.ID),
 		valueobject.UserID(m.UserID),
 		m.ServiceName,
