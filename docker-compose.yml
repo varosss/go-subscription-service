@@ -1,9 +1,9 @@
 x-go-tmpl: &go-tmpl
-  image: vaross/private-projects:subscription-dev
+  image: vaross/private-projects:subscription-prod-latest
   restart: always
   platform: linux/amd64
-  volumes:
-    - ./:/srv/:rw
+  # volumes:
+  #   - ./:/srv/:rw
   env_file:
     - .env
   networks:

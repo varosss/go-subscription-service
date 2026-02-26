@@ -1,0 +1,35 @@
+# Сервис отслеживания пользовательских подписок на Go
+
+## Разворачивание
+
+1. Клонируйте репозиторий:
+
+```bash
+git clone git@github.com:varosss/go-subscription-service.git
+cd go-subscription-service
+```
+
+2. Соберите приложение:
+
+```bash
+make build.prod
+```
+
+3. Запустите сервисы через Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+4. Выполните миграции:
+```bash
+make docker-migrate-up
+```
+
+4. Откройте документацию API:
+
+```
+http://localhost:81/swagger/index.html
+```
+
+> Замените `localhost:81` на ваш хост/порт, если используете другое окружение.
