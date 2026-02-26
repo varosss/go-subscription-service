@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"go-subscription-service/internal/application/dto"
+	aport "go-subscription-service/internal/application/port"
 	"go-subscription-service/internal/domain/entity"
 	"go-subscription-service/internal/domain/port"
 	"go-subscription-service/internal/domain/valueobject"
@@ -23,13 +24,16 @@ type CreateSubscriptionResult struct {
 
 type CreateSubscriptionUseCase struct {
 	subscriptions port.SubscriptionRepo
+	logger        aport.Logger
 }
 
 func NewCreateSubscriptionUseCase(
 	subscriptions port.SubscriptionRepo,
+	logger aport.Logger,
 ) *CreateSubscriptionUseCase {
 	return &CreateSubscriptionUseCase{
 		subscriptions: subscriptions,
+		logger:        logger,
 	}
 }
 
@@ -37,6 +41,11 @@ func (uc *CreateSubscriptionUseCase) Execute(
 	ctx context.Context,
 	cmd CreateSubscriptionCommand,
 ) (*CreateSubscriptionResult, error) {
+	uc.logger.Debug(ctx, "starting create subscription",
+		aport.Field{Key: "user_id", Value: cmd.UserID.String()},
+		aport.Field{Key: "service_name", Value: cmd.ServiceName},
+	)
+
 	subscription := entity.NewSubscription(
 		cmd.UserID,
 		cmd.ServiceName,
@@ -47,8 +56,19 @@ func (uc *CreateSubscriptionUseCase) Execute(
 
 	err := uc.subscriptions.Save(ctx, subscription)
 	if err != nil {
+		uc.logger.Error(ctx, "failed to save subscription",
+			aport.Field{Key: "user_id", Value: cmd.UserID.String()},
+			aport.Field{Key: "service_name", Value: cmd.ServiceName},
+			aport.Field{Key: "error", Value: err.Error()},
+		)
+
 		return nil, err
 	}
+
+	uc.logger.Info(ctx, "subscription created successfully",
+		aport.Field{Key: "subscription_id", Value: subscription.ID().String()},
+		aport.Field{Key: "user_id", Value: cmd.UserID.String()},
+	)
 
 	return &CreateSubscriptionResult{
 		Subscription: dto.Subscription{

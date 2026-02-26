@@ -28,7 +28,7 @@ func (r *gormSubscriptionRepo) Save(ctx context.Context, subscription *entity.Su
 	model.CreatedAt = now
 	model.UpdatedAt = now
 
-	return r.db.WithContext(ctx).Create(model).Error
+	return r.db.WithContext(ctx).Save(model).Error
 }
 
 func (r *gormSubscriptionRepo) GetByID(ctx context.Context, subscriptionID valueobject.SubscriptionID) (*entity.Subscription, error) {
@@ -74,17 +74,17 @@ func (r *gormSubscriptionRepo) List(
 		query = query.Where("start_date <= ?", *toDate)
 	}
 
-	err := query.Order("start_date desc").Find(&subModels).Error
-	if err != nil {
-		return nil, err
-	}
-
 	if limit != nil {
 		query = query.Limit(*limit)
 	}
 
 	if offset != nil {
 		query = query.Offset(*offset)
+	}
+
+	err := query.Order("start_date desc").Find(&subModels).Error
+	if err != nil {
+		return nil, err
 	}
 
 	subs := make([]*entity.Subscription, len(subModels))

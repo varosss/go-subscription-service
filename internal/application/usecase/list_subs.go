@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"go-subscription-service/internal/application/dto"
+	aport "go-subscription-service/internal/application/port"
 	"go-subscription-service/internal/domain/port"
 	"go-subscription-service/internal/domain/valueobject"
 	"time"
@@ -23,17 +24,22 @@ type ListSubscriptionsResult struct {
 
 type ListSubscriptionsUseCase struct {
 	subscriptions port.SubscriptionRepo
+	logger        aport.Logger
 }
 
 func NewListSubscriptionsUseCase(
 	subscriptions port.SubscriptionRepo,
+	logger aport.Logger,
 ) *ListSubscriptionsUseCase {
 	return &ListSubscriptionsUseCase{
 		subscriptions: subscriptions,
+		logger:        logger,
 	}
 }
 
 func (uc *ListSubscriptionsUseCase) Execute(ctx context.Context, cmd ListSubscriptionsCommand) (*ListSubscriptionsResult, error) {
+	uc.logger.Debug(ctx, "starting list subscriptions")
+
 	subs, err := uc.subscriptions.List(
 		ctx,
 		cmd.UserID,
@@ -44,10 +50,14 @@ func (uc *ListSubscriptionsUseCase) Execute(ctx context.Context, cmd ListSubscri
 		cmd.Offset,
 	)
 	if err != nil {
+		uc.logger.Error(ctx, "failed to get list of subscriptions",
+			aport.Field{Key: "error", Value: err.Error()},
+		)
+
 		return nil, err
 	}
 
-	subsResult := make([]*dto.Subscription, len(subs))
+	subResults := make([]*dto.Subscription, len(subs))
 	for i, sub := range subs {
 		var endDate *string
 		if sub.EndDate() != nil {
@@ -55,7 +65,7 @@ func (uc *ListSubscriptionsUseCase) Execute(ctx context.Context, cmd ListSubscri
 			endDate = &formattedDate
 		}
 
-		subsResult[i] = &dto.Subscription{
+		subResults[i] = &dto.Subscription{
 			ID:          sub.ID().String(),
 			UserID:      sub.UserID().String(),
 			ServiceName: sub.ServiceName(),
@@ -65,7 +75,11 @@ func (uc *ListSubscriptionsUseCase) Execute(ctx context.Context, cmd ListSubscri
 		}
 	}
 
+	uc.logger.Info(ctx, "list subscriptions successfully",
+		aport.Field{Key: "subscriptions", Value: subResults},
+	)
+
 	return &ListSubscriptionsResult{
-		Subs: subsResult,
+		Subs: subResults,
 	}, err
 }

@@ -1,6 +1,7 @@
 package builder
 
 import (
+	aport "go-subscription-service/internal/application/port"
 	"go-subscription-service/internal/application/usecase"
 	"go-subscription-service/internal/domain/port"
 )
@@ -16,13 +17,14 @@ type UseCases struct {
 
 func BuildUseCases(
 	subscriptions port.SubscriptionRepo,
+	logger aport.Logger,
 ) *UseCases {
 	return &UseCases{
-		CreateSub:          usecase.NewCreateSubscriptionUseCase(subscriptions),
-		UpdateSub:          usecase.NewUpdateSubscriptionUseCase(subscriptions),
-		GetSub:             usecase.NewGetSubscriptionUseCase(subscriptions),
-		DeleteSub:          usecase.NewDeleteSubscriptionUseCase(subscriptions),
-		ListSubs:           usecase.NewListSubscriptionsUseCase(subscriptions),
-		CalculateTotalCost: usecase.NewCalculateTotalCostUseCase(subscriptions),
+		CreateSub:          usecase.NewCreateSubscriptionUseCase(subscriptions, logger),
+		UpdateSub:          usecase.NewUpdateSubscriptionUseCase(subscriptions, logger),
+		GetSub:             usecase.NewGetSubscriptionUseCase(subscriptions, logger),
+		DeleteSub:          usecase.NewDeleteSubscriptionUseCase(subscriptions, logger),
+		ListSubs:           usecase.NewListSubscriptionsUseCase(subscriptions, logger),
+		CalculateTotalCost: usecase.NewCalculateTotalCostUseCase(subscriptions, logger),
 	}
 }

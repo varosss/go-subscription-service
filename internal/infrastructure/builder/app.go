@@ -4,8 +4,10 @@ import (
 	"fmt"
 	httpcontroller "go-subscription-service/internal/infrastructure/adapter/controller/http"
 	gormrepo "go-subscription-service/internal/infrastructure/adapter/gorm/repo"
+	"go-subscription-service/internal/infrastructure/adapter/logger"
 	"go-subscription-service/internal/infrastructure/config"
 	"go-subscription-service/internal/infrastructure/db"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -67,7 +69,10 @@ func BuildApp(cfg *config.Config) (*App, error) {
 	router := gin.Default()
 	router.Use(gin.Recovery())
 
-	uc := BuildUseCases(gormrepo.NewGormSubscriptionRepo(conn))
+	uc := BuildUseCases(
+		gormrepo.NewGormSubscriptionRepo(conn),
+		logger.NewSlogLogger(slog.LevelDebug),
+	)
 
 	subsHandler := httpcontroller.NewSubscriptionHandler(
 		uc.CreateSub,
